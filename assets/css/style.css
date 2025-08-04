@@ -1,7 +1,6 @@
 body {
     font-family: 'Fira Code', monospace;
     font-size: large;
-    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 body.light {
@@ -251,3 +250,4 @@ body.dark {
     -ms-transform: translateY(-50%);
     transform: translateY(-50%);
 }
+
