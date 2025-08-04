@@ -6,40 +6,63 @@ mobileMenuBtn.addEventListener('click', () => {
     mobileMenu.classList.toggle('show');
 });
 
-const themeIcons = document.querySelectorAll('.theme-toggle');
-const body = document.body;
+document.addEventListener('DOMContentLoaded', () => {
+  const body = document.body;
+  const themeCheckbox = document.querySelector('.theme-switch__checkbox');
+  const mobileThemeToggle = document.querySelector('.theme-toggle');
+  const mobileMenuButton = document.getElementById('mobile-menu-button');
+  const mobileMenu = document.getElementById('mobile-menu');
 
-// Load theme from localStorage
-const savedTheme = localStorage.getItem('theme');
-if (savedTheme) {
-    body.classList.remove('light', 'dark');
+  // Load saved theme
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'dark' || savedTheme === 'light') {
     body.classList.add(savedTheme);
+    if (themeCheckbox) themeCheckbox.checked = savedTheme === 'dark';
+    updateMobileIcon(savedTheme);
+  } else {
+    body.classList.add('light');
+    if (themeCheckbox) themeCheckbox.checked = false;
+    updateMobileIcon('light');
+  }
 
-    // Update icons accordingly
-    themeIcons.forEach(icon => {
-        icon.classList.toggle('fa-sun', savedTheme === 'dark');
-        icon.classList.toggle('fa-moon', savedTheme !== 'dark');
+  // Theme switch from desktop toggle
+  if (themeCheckbox) {
+    themeCheckbox.addEventListener('change', () => {
+      const newTheme = themeCheckbox.checked ? 'dark' : 'light';
+      body.classList.remove('light', 'dark');
+      body.classList.add(newTheme);
+      localStorage.setItem('theme', newTheme);
+      updateMobileIcon(newTheme);
     });
-}
+  }
 
-// Theme toggle function
-function toggleTheme() {
-    body.classList.toggle('dark');
-    body.classList.toggle('light');
-
-    const currentTheme = body.classList.contains('dark') ? 'dark' : 'light';
-    localStorage.setItem('theme', currentTheme);
-
-    themeIcons.forEach(icon => {
-        icon.classList.toggle('fa-sun', currentTheme === 'dark');
-        icon.classList.toggle('fa-moon', currentTheme !== 'dark');
+  // Theme switch from mobile icon
+  if (mobileThemeToggle) {
+    mobileThemeToggle.addEventListener('click', () => {
+      const newTheme = body.classList.contains('dark') ? 'light' : 'dark';
+      body.classList.remove('light', 'dark');
+      body.classList.add(newTheme);
+      localStorage.setItem('theme', newTheme);
+      if (themeCheckbox) themeCheckbox.checked = newTheme === 'dark';
+      updateMobileIcon(newTheme);
     });
-}
+  }
 
-// Listen for toggle clicks
-themeIcons.forEach(icon => {
-    icon.addEventListener('click', toggleTheme);
+  // Mobile menu toggle
+  if (mobileMenuButton && mobileMenu) {
+    mobileMenuButton.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+  }
+
+  // Update mobile icon class (sun/moon)
+  function updateMobileIcon(theme) {
+    if (!mobileThemeToggle) return;
+    mobileThemeToggle.classList.remove('fa-sun', 'fa-moon');
+    mobileThemeToggle.classList.add(theme === 'dark' ? 'fa-sun' : 'fa-moon');
+  }
 });
+
 
 // read More
 function toggleAbout() {
@@ -52,7 +75,7 @@ function toggleAbout() {
         moreText.style.display = "none";
         btn.textContent = "Read More";
     }
-}
+} 
 
 function toggleProfileCard() {
     const modal = document.getElementById('profileCard');
